@@ -1,5 +1,4 @@
-package app;
-
+package Modelisation;
 import java.util.Stack;
 
 class DFS

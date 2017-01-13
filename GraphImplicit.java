@@ -1,4 +1,4 @@
-package app;
+package Modelisation;
 import java.util.ArrayList;
 
 class GraphImplicit implements Graph{

@@ -1,4 +1,4 @@
-package app;
+package Modelisation;
 import java.io.*;
 
 public interface Graph

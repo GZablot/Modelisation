@@ -1,4 +1,4 @@
-package app;
+package Modelisation;
 
 class Test
 {
@@ -33,6 +33,12 @@ class Test
 		// dfs à partir du sommet 3
 		visite = new boolean[n*n+2];
 		dfs(g, 3);
+
+		 SeamCarving s = new SeamCarving();
+		 /*test fonction d'ecriture fichier pgm (creer un fichier)*/
+		 s.writepgm(s.readpgm("test.pgm"), "test1.pgm");
+		 /*test fonction d'interet (creer un fichier)*/
+		 s.writepgm(s.interest(s.readpgm("test.pgm")), "interest.pgm");
 	 }
    
    public static void main(String[] args)
