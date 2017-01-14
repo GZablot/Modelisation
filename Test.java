@@ -2,19 +2,20 @@ package Modelisation;
 
 class Test
 {
-   static boolean visite[];
-   public static void dfs(Graph g, int u)
-	 {
+	static boolean visite[];
+
+	public static void dfs(Graph g, int u)
+	{
 		visite[u] = true;
 		System.out.println("Je visite " + u);
 		for (Edge e: g.next(u))
-		  if (!visite[e.to])
-			dfs(g,e.to);
-	 }
-   
-   public static void testGraph()
-	 {
-		int n = 5;
+			if (!visite[e.to])
+				dfs(g,e.to);
+	}
+
+	public static void testGraph()
+	{
+		/*int n = 5;
 		int i,j;
 		GraphArrayList g = new GraphArrayList(n*n+2);
 		
@@ -32,17 +33,22 @@ class Test
 		g.writeFile("test.dot");
 		// dfs à partir du sommet 3
 		visite = new boolean[n*n+2];
-		dfs(g, 3);
+		dfs(g, 3);*/
 
-		 SeamCarving s = new SeamCarving();
+		SeamCarving s = new SeamCarving();
 		 /*test fonction d'ecriture fichier pgm (creer un fichier)*/
-		 s.writepgm(s.readpgm("test.pgm"), "test1.pgm");
+		s.writepgm(s.readpgm("test.pgm"), "test1.pgm");
 		 /*test fonction d'interet (creer un fichier)*/
-		 s.writepgm(s.interest(s.readpgm("test.pgm")), "interest.pgm");
-	 }
-   
-   public static void main(String[] args)
-	 {
+		s.writepgm(s.interest(s.readpgm("test.pgm")), "interest.pgm");
+		Graph g = s.toGraph(s.interest(s.readpgm("test.pgm")));
+		g.writeFile("test.dot");
+		// dfs à partir du sommet 0
+		visite = new boolean[12+2];
+		dfs(g, 0);
+	}
+
+	public static void main(String[] args)
+	{
 		testGraph();
-	 }
+	}
 }
