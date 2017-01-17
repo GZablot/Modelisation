@@ -1,5 +1,8 @@
 package Modelisation;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 class Test
 {
 	static boolean visite[];
@@ -7,11 +10,13 @@ class Test
 	public static void dfs(Graph g, int u)
 	{
 		visite[u] = true;
-		System.out.println("Je visite " + u);
+
+		//System.out.println("Je visite " + u);
 		for (Edge e: g.next(u))
 			if (!visite[e.to])
 				dfs(g,e.to);
 	}
+
 
 	public static void testGraph()
 	{
@@ -43,8 +48,11 @@ class Test
 		Graph g = s.toGraph(s.interest(s.readpgm("test.pgm")));
 		g.writeFile("test.dot");
 		// dfs à partir du sommet 0
-		visite = new boolean[12+2];
-		dfs(g, 0);
+		//visite = new boolean[g.vertices()+2];
+		//dfs(g, 0);
+
+		/*test tritopo*/
+		s.tritopo(g);
 	}
 
 	public static void main(String[] args)

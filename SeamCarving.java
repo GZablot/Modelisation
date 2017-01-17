@@ -5,12 +5,12 @@ import java.io.*;
 import java.util.*;
 public class SeamCarving
 {
+    private ArrayList<Integer> chemin = new ArrayList<Integer>();
 
     public static int[][] readpgm(String fn)
     {
         try {
             InputStream f = ClassLoader.getSystemClassLoader().getResourceAsStream(fn);
-            System.out.println("valeur de f: "+ f);
             BufferedReader d = new BufferedReader(new InputStreamReader(f));
             String magic = d.readLine();
             String line = d.readLine();
@@ -41,9 +41,7 @@ public class SeamCarving
 
     public static void writepgm(int[][] image, String filename){
         try {
-            //FileOutputStream fos = new FileOutputStream(new File(filename));
-            //TODO modifier le chemin selon PC
-            File file = new File("C:\\Users\\Guillaume\\Desktop\\Ecole\\Modélisation\\"+ filename);
+            File file = new File(System.getProperty("user.dir")+ "/" + filename);
             BufferedWriter outputWriter = new BufferedWriter(new FileWriter(file));
 			/*écrit largeur puis hauteur de l'image sur la même ligne*/
             outputWriter.write("P2\n"+image[0].length + " " + image.length+ "\n255");
@@ -54,7 +52,6 @@ public class SeamCarving
                         outputWriter.newLine();
                     outputWriter.write(image[i][j] + " ");
                 }
-                //outputWriter.newLine();
             }
             outputWriter.close();
 
@@ -130,6 +127,30 @@ public class SeamCarving
         return g;
     }
 
+    public void dfs(Graph g, int u)
+    {
+        Test.visite[u] = true;
+        chemin.add(u);
+        //System.out.println("Je visite " + u);
+        for (Edge e: g.next(u))
+            if (!Test.visite[e.to])
+                dfs(g,e.to);
+    }
 
+    public ArrayList<Integer> tritopo(Graph g){
+        Test.visite = new boolean[g.vertices()+2];
+        dfs(g, 0);
+		/*ordre inverse de l'ordre suffixe*/
+        //Collections.reverse(chemin);
+
+        for(int i:chemin) {
+            System.out.print(i+" ");
+        }
+        return chemin;
+    }
+
+    public void Bellman(Graph g, int s, int t, ArrayList<Integer> order){
+        
+    }
 
 }
