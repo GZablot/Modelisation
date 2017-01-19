@@ -1,5 +1,7 @@
 package Modelisation;
 
+import sun.nio.cs.ext.IBM037;
+
 import java.util.ArrayList;
 import java.io.*;
 import java.util.*;
@@ -130,27 +132,83 @@ public class SeamCarving
     public void dfs(Graph g, int u)
     {
         Test.visite[u] = true;
-        chemin.add(u);
+
         //System.out.println("Je visite " + u);
         for (Edge e: g.next(u))
             if (!Test.visite[e.to])
                 dfs(g,e.to);
+        chemin.add(u);
     }
 
     public ArrayList<Integer> tritopo(Graph g){
         Test.visite = new boolean[g.vertices()+2];
         dfs(g, 0);
 		/*ordre inverse de l'ordre suffixe*/
-        //Collections.reverse(chemin);
+        Collections.reverse(chemin);
 
         for(int i:chemin) {
             System.out.print(i+" ");
         }
+        System.out.print("\n");
         return chemin;
     }
 
-    public void Bellman(Graph g, int s, int t, ArrayList<Integer> order){
-        
+    public int min(ArrayList<Integer> al){
+
+        int min = 0;//al.get(0);
+        if(!al.isEmpty())
+            min = al.get(0);
+
+        for(Integer i : al){
+            if(i < min) min = i;
+        }
+        return min;
+    }
+
+
+    public int Bellman(Graph g, int s, int t, ArrayList<Integer> order){
+        Map<Integer, Integer> T = new HashMap<>(order.size());
+        Iterable<Edge> sommetsPrecedent ;
+        ArrayList<Integer> cheminMin = new ArrayList<Integer>();
+        ArrayList<Integer> passageSommets = new ArrayList<Integer>();
+        Map<Integer, Integer> indiceSommets = new HashMap<>(order.size());
+        int coutMin = 0, indiceSommet = 0;
+        T.put(s, 0);
+
+        for(int i = 0; i < order.size(); i++){
+            /*test valeur sommets précédents et prend la valeur minimum*/
+            sommetsPrecedent = g.prev(order.get(i));
+            for (Edge e:sommetsPrecedent) {
+                //System.out.println("sommet: " + order.get(i)+"from: "+ e.from + " to: "+ e.to+ " "+ (T.get(e.from) + e.cost));
+                cheminMin.add(T.get(e.from) + e.cost);
+                indiceSommets.put(e.from,T.get(e.from) + e.cost );
+            }
+            coutMin = this.min(cheminMin);
+
+            for(Map.Entry e: indiceSommets.entrySet()){
+                if(coutMin == (int) e.getValue()){
+                    indiceSommet = (int) e.getKey();
+                    break;
+                }
+            }
+
+            indiceSommets.clear();
+            cheminMin.clear();
+            /*correspondance entre le sommet dans l'ordre topologique avec coutMin*/
+            T.put(order.get(i), coutMin);
+            /*correspondance entre le sommet dans l'ordre topologique et le sommet précédement visité*/
+            passageSommets.add(indiceSommet);
+
+        }
+
+        for(int i = 0; i < order.size(); i++){
+            System.out.println("Sommet: "+order.get(i) + " CCM: "+ T.get(order.get(i)));
+        }
+        for(int i = 0; i < order.size(); i++){
+            System.out.println("Sommet: "+order.get(i) + " passage:" +passageSommets.get(i));
+        }
+
+        return T.get(t);
     }
 
 }

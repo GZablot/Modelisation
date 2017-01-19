@@ -52,7 +52,10 @@ class Test
 		//dfs(g, 0);
 
 		/*test tritopo*/
-		s.tritopo(g);
+		//s.tritopo(g);
+
+		int cout = s.Bellman(g,0,13,s.tritopo(g));
+		System.out.println("CCM de 0 à 13:"+ cout);
 	}
 
 	public static void main(String[] args)
