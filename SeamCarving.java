@@ -52,7 +52,8 @@ public class SeamCarving
                 for(int j = 0; j < image[0].length; j++){
                     if(j % 26 == 0)
                         outputWriter.newLine();
-                    outputWriter.write(image[i][j] + " ");
+                    if(image[i][j] != -1)
+                        outputWriter.write(image[i][j] + " ");
                 }
             }
             outputWriter.close();
@@ -155,7 +156,7 @@ public class SeamCarving
 
     public int min(ArrayList<Integer> al){
 
-        int min = 0;//al.get(0);
+        int min = 0;
         if(!al.isEmpty())
             min = al.get(0);
 
@@ -165,8 +166,19 @@ public class SeamCarving
         return min;
     }
 
+    public int getIndice(ArrayList<Integer> al, int val){
+        int i = 0;
+        while( i < al.size()){
+            if(al.get(i) == val)
+                return i;
 
-    public int Bellman(Graph g, int s, int t, ArrayList<Integer> order){
+            i++;
+        }
+
+        return -1;
+    }
+
+    public ArrayList<Integer> Bellman(Graph g, int s, int t, ArrayList<Integer> order){
         Map<Integer, Integer> T = new HashMap<>(order.size());
         Iterable<Edge> sommetsPrecedent ;
         ArrayList<Integer> cheminMin = new ArrayList<Integer>();
@@ -208,7 +220,35 @@ public class SeamCarving
             System.out.println("Sommet: "+order.get(i) + " passage:" +passageSommets.get(i));
         }
 
-        return T.get(t);
+        /*creer la liste des sommets du ccm (mais bug)*/
+        ArrayList<Integer> res = new ArrayList<>();
+        int j = t;
+        while(passageSommets.get(j) != 0){
+            j = this.getIndice(order, passageSommets.get(j));
+            res.add(order.get(j));
+            //j = this.getIndice(order, passageSommets.get(j));
+        }
+
+        Collections.reverse(res);
+
+
+        return res;
+    }
+
+    /**
+     *
+     * @param img tableau de l'image
+     * @param al liste des sommets à supprimer
+     */
+    public int[][] suppression(int[][] img, ArrayList<Integer> al){
+        for(int i =0; i < img.length; i ++){
+            for(int j = 0; j < img[0].length; j++){
+                if(al.get(i) == ((i*4)+j+1))
+                    img[i][j] = -1;
+            }
+        }
+
+        return img;
     }
 
 }

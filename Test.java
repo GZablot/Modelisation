@@ -42,9 +42,11 @@ class Test
 
 		SeamCarving s = new SeamCarving();
 		 /*test fonction d'ecriture fichier pgm (creer un fichier)*/
-		s.writepgm(s.readpgm("test.pgm"), "test1.pgm");
+		//s.writepgm(s.readpgm("test.pgm"), "reductionTest.pgm");
 		 /*test fonction d'interet (creer un fichier)*/
-		s.writepgm(s.interest(s.readpgm("test.pgm")), "interest.pgm");
+		//s.writepgm(s.interest(s.readpgm("test.pgm")), "interest.pgm");
+
+
 		Graph g = s.toGraph(s.interest(s.readpgm("test.pgm")));
 		g.writeFile("test.dot");
 		// dfs à partir du sommet 0
@@ -54,8 +56,13 @@ class Test
 		/*test tritopo*/
 		//s.tritopo(g);
 
-		int cout = s.Bellman(g,0,13,s.tritopo(g));
-		System.out.println("CCM de 0 à 13:"+ cout);
+		ArrayList<Integer> cout = s.Bellman(g,0,13,s.tritopo(g));
+		for(int i = 0; i < cout.size(); i++){
+			System.out.println("Sommet: "+cout.get(i));
+		}
+
+		/*test supression pixels*/
+		s.writepgm(s.suppression(s.readpgm("test.pgm"), cout), "reductionTest.pgm");
 	}
 
 	public static void main(String[] args)
