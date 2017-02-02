@@ -43,19 +43,29 @@ public class SeamCarving
 
     public static void writepgm(int[][] image, String filename){
         try {
+            int count = 0, width = image[0].length, height = image.length;
             File file = new File(System.getProperty("user.dir")+ "/" + filename);
             BufferedWriter outputWriter = new BufferedWriter(new FileWriter(file));
 			/*écrit largeur puis hauteur de l'image sur la même ligne*/
-            outputWriter.write("P2\n"+image[0].length + " " + image.length+ "\n255");
+            outputWriter.write("P2\n"+(width-1) + " " + height+ "\n255");
 
-            for(int i = 0; i < image.length; i++){
-                for(int j = 0; j < image[0].length; j++){
+            /*while(count < height * width){
+                if(image[count / width][count % height] != -1)
+                    outputWriter.write(image[count / width][count % height] + " ");
+                if(count % 26 == 0)
+                    outputWriter.newLine();
+                count++;
+            }*/
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
                     if(j % 26 == 0)
                         outputWriter.newLine();
                     if(image[i][j] != -1)
                         outputWriter.write(image[i][j] + " ");
+
                 }
             }
+
             outputWriter.close();
 
         }catch (FileNotFoundException e){
@@ -106,18 +116,18 @@ public class SeamCarving
                 /*à la fin de la ligne*/
                 if(j == (itr[0].length)-1 ){
 
-                    g.addEdge(new Edge((i*4)+itr[0].length, (((1+i)*4)+itr[0].length)-1 , itr[i][j]));
-                    g.addEdge(new Edge((i*4)+itr[0].length, ((1+i)*4)+itr[0].length , itr[i][j]));
+                    g.addEdge(new Edge((i*itr[0].length)+itr[0].length, (((1+i)*itr[0].length)+itr[0].length)-1 , itr[i][j]));
+                    g.addEdge(new Edge((i*itr[0].length)+itr[0].length, ((1+i)*itr[0].length)+itr[0].length , itr[i][j]));
                 }else{
                     /*au debut de la ligne*/
                     if(j == 0){
-                        g.addEdge(new Edge((i*4)+1, (((1+i)*4)+1)+1 , itr[i][j]));
-                        g.addEdge(new Edge((i*4)+1, ((1+i)*4)+1 , itr[i][j]));
+                        g.addEdge(new Edge((i*itr[0].length)+1, ((1+i)*itr[0].length)+2 , itr[i][j]));
+                        g.addEdge(new Edge((i*itr[0].length)+1, ((1+i)*itr[0].length)+1 , itr[i][j]));
                     }else{
                         /*au milieu de la ligne*/
-                        g.addEdge(new Edge((i*4)+1+j, (((1+i)*4)+1)+j-1 , itr[i][j]));
-                        g.addEdge(new Edge((i*4)+1+j, (((1+i)*4)+1)+j , itr[i][j]));
-                        g.addEdge(new Edge((i*4)+1+j, (((1+i)*4)+1)+j+1 , itr[i][j]));
+                        g.addEdge(new Edge((i*itr[0].length)+1+j, (((1+i)*itr[0].length)+1)+j-1 , itr[i][j]));
+                        g.addEdge(new Edge((i*itr[0].length)+1+j, (((1+i)*itr[0].length)+1)+j , itr[i][j]));
+                        g.addEdge(new Edge((i*itr[0].length)+1+j, (((1+i)*itr[0].length)+1)+j+1 , itr[i][j]));
                     }
                 }
             }
@@ -147,10 +157,10 @@ public class SeamCarving
 		/*ordre inverse de l'ordre suffixe*/
         Collections.reverse(chemin);
 
-        for(int i:chemin) {
+        /*for(int i:chemin) {
             System.out.print(i+" ");
         }
-        System.out.print("\n");
+        System.out.print("\n");*/
         return chemin;
     }
 
@@ -176,6 +186,23 @@ public class SeamCarving
         }
 
         return -1;
+    }
+
+    public ArrayList<Integer> extractInterval(Graph g, int s, int t, ArrayList<Integer> order){
+        ArrayList<Integer> extractList = new ArrayList<Integer>();
+        boolean condition = false;
+
+        for (Integer i : order){
+            if (i == s) condition = true;
+            if (condition){
+                extractList.add(i);
+            }
+            if (i == t) condition = false;
+        }
+
+
+
+        return extractList;
     }
 
     public ArrayList<Integer> Bellman(Graph g, int s, int t, ArrayList<Integer> order){
@@ -213,12 +240,12 @@ public class SeamCarving
 
         }
 
-        for(int i = 0; i < order.size(); i++){
+        /*for(int i = 0; i < order.size(); i++){
             System.out.println("Sommet: "+order.get(i) + " CCM: "+ T.get(order.get(i)));
         }
         for(int i = 0; i < order.size(); i++){
             System.out.println("Sommet: "+order.get(i) + " passage:" +passageSommets.get(i));
-        }
+        }*/
 
         /*creer la liste des sommets du ccm (mais bug)*/
         ArrayList<Integer> res = new ArrayList<>();
@@ -233,18 +260,84 @@ public class SeamCarving
 
 
         return res;
+        /*int[] cost = new int[g.vertices()];
+        int[] chemin = new int[g.vertices()];
+        ArrayList<Integer> bellman = new ArrayList<>();
+        boolean condition = false;
+        order = extractInterval(g,s, t, order);
+
+        for (int i=0; i<cost.length; i++) cost[i] = -1;
+
+
+        for (Integer i : order) {
+
+
+
+            if (i == s) condition=true;
+
+
+
+            if(condition) {
+
+                for (Edge e : g.prev(i)) {
+
+
+                    if (cost[i] > (e.cost + cost[e.from]) && order.contains(e.from)) {
+
+                        // System.out.println("sommet "+i+"  inscrit avec valeur  "+ (e.cost + cost[e.from])+"  " +e.cost +" + " +cost[e.from] + " chemin avec " + e.from);
+                        cost[i] = e.cost + cost[e.from];
+                        chemin[i] = e.from;
+                    } else if (cost[i] == -1 && cost[i] < e.cost && order.contains(e.from)) {
+                        // System.out.println("sommet "+i+"  inscrit avec valeur  "+ e.cost + " chemin avec " + e.from);
+
+                        // System.out.println(cost[i] +" == -1 && " +cost[i] + " < " + e.cost + " ||   ( " +cost[e.from] +" ==  -1 && " + cost[i] + " <  " +e.cost);
+
+                        cost[i] = e.cost;
+                        chemin[i] = e.from;
+                    }
+
+                }
+            }
+
+            if (i==t) condition = false;
+
+        }
+
+        int varChemin = t;
+        bellman.add(varChemin);
+        while(varChemin != -1){
+
+            if (varChemin == 0 || chemin[varChemin] == 0 ){
+
+                varChemin = -1;
+            }else{
+
+                bellman.add(chemin[varChemin]);
+                varChemin = bellman.get(bellman.size()-1);
+            }
+        }
+
+        if (s==0) bellman.add(0);
+
+        Collections.reverse(bellman);
+
+        return  bellman;*/
     }
 
     /**
      *
      * @param img tableau de l'image
-     * @param al liste des sommets à supprimer
+     * @param al liste des sommets à supprimer provenant de Bellman
      */
     public int[][] suppression(int[][] img, ArrayList<Integer> al){
+        int k = 0;
         for(int i =0; i < img.length; i ++){
             for(int j = 0; j < img[0].length; j++){
-                if(al.get(i) == ((i*4)+j+1))
+                if(k < al.size() && al.get(k) == ((i*img[0].length)+j+1) ) {
                     img[i][j] = -1;
+                    k++;
+                }
+
             }
         }
 

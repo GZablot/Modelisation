@@ -47,8 +47,11 @@ class Test
 		//s.writepgm(s.interest(s.readpgm("test.pgm")), "interest.pgm");
 
 
-		Graph g = s.toGraph(s.interest(s.readpgm("test.pgm")));
-		g.writeFile("test.dot");
+		/*Graph g = s.toGraph(s.interest(s.readpgm("ex1.pgm")));
+		g.writeFile("test.dot");*/
+
+
+
 		// dfs à partir du sommet 0
 		//visite = new boolean[g.vertices()+2];
 		//dfs(g, 0);
@@ -56,13 +59,64 @@ class Test
 		/*test tritopo*/
 		//s.tritopo(g);
 
-		ArrayList<Integer> cout = s.Bellman(g,0,13,s.tritopo(g));
+
+
+
+
+		/*ArrayList<Integer> cout = s.Bellman(g,0,13,s.tritopo(g));
 		for(int i = 0; i < cout.size(); i++){
-			System.out.println("Sommet: "+cout.get(i));
+			System.out.println("Sommet où passer: "+cout.get(i));
 		}
 
-		/*test supression pixels*/
-		s.writepgm(s.suppression(s.readpgm("test.pgm"), cout), "reductionTest.pgm");
+		*//*test supression pixels*//*
+		s.writepgm(s.suppression(s.readpgm("ex1.pgm"), cout), "reductionTestEx1.pgm");*/
+		int[][] img = s.readpgm("ex1.pgm");
+
+		int[][] interest = s.interest(img);
+		Graph g = s.toGraph(interest);
+		// g.writeFile("res/interest0098.dot");
+
+
+
+			/*interest = s.interest(img);
+			g = s.toGraph(interest);*/
+
+
+		ArrayList<Integer> altopo = s.tritopo(g);
+
+
+		ArrayList<Integer> al = s.Bellman(g, 0, g.vertices() - 1, altopo);
+
+		//for (Integer i : al) System.out.print(" " + i);
+
+		System.out.println(al.size());
+		img = s.suppression(img, al);
+		SeamCarving.writepgm(img, "src/jlk967js987k.pgm");
+
+		for(int i = 0; i < 20; i++) {
+			img = s.readpgm("jlk967js987k.pgm");
+
+			interest = s.interest(img);
+			g = s.toGraph(interest);
+			// g.writeFile("res/interest0098.dot");
+
+
+
+			/*interest = s.interest(img);
+			g = s.toGraph(interest);*/
+
+
+			altopo = s.tritopo(g);
+
+
+			al = s.Bellman(g, 0, g.vertices() - 1, altopo);
+
+			//for (Integer i : al) System.out.print(" " + i);
+
+			System.out.println(al.size());
+			img = s.suppression(img, al);
+			SeamCarving.writepgm(img, "src/jlk967js987k.pgm");
+		}
 	}
 
 	public static void main(String[] args)
